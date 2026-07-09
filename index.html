@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NJ High School Sports Predictor</title>
+
+<!-- SEO -->
+<meta name="description" content="Playoff predictors and power rankings for New Jersey high school sports across fall, winter, and spring seasons.">
+<meta name="keywords" content="NJ high school sports, New Jersey, playoff predictor, power rankings, football, basketball, soccer, volleyball, ice hockey, lacrosse, baseball, softball, field hockey, flag football">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph -->
+<meta property="og:title" content="NJ High School Sports Predictor">
+<meta property="og:description" content="Playoff predictors and power rankings for New Jersey high school sports.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14171a;
+    --panel: #1b1f24;
+    --panel-raised: #20252b;
+    --line: #2c3138;
+    --chalk: #eae7da;
+    --chalk-dim: #9aa0a6;
+    --gold: #c9a227;
+    --gold-dim: #8a7320;
+    --turf: #3c6b42;
+    --turf-bright: #5a9663;
+    --red: #b5483f;
+  }
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
+  body{
+    background: var(--bg);
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .wrap{
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+    width: 100%;
+    flex: 1;
+  }
+  header.masthead{
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .masthead h1{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 42px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  .masthead h1 .accent{ color: var(--gold); }
+  .masthead .sub{
+    color: var(--chalk-dim);
+    font-size: 15px;
+    margin-top: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .divider{
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    margin: 32px auto 40px;
+    max-width: 400px;
+  }
+  .season{
+    margin-bottom: 44px;
+  }
+  .season-title{
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gold);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .season-title .season-note{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--chalk-dim);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+    text-decoration: none;
+    color: inherit;
+    min-height: 150px;
+  }
+  .card.live{ cursor: pointer; }
+  .card.live:hover{
+    transform: translateY(-3px);
+    border-color: var(--gold);
+  }
+  .card.soon{
+    opacity: 0.55;
+    cursor: default;
+  }
+  .card-icon{
+    font-size: 26px;
+    line-height: 1;
+  }
+  .card h3{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 18px;
+    color: var(--chalk);
+    line-height: 1.15;
+  }
+  .card p{
+    color: var(--chalk-dim);
+    font-size: 12.5px;
+    line-height: 1.5;
+    flex: 1;
+  }
+  .badge{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .badge.live{
+    color: var(--turf-bright);
+    border: 1px solid var(--turf);
+    background: rgba(90,150,99,0.1);
+  }
+  .badge.soon{
+    color: var(--chalk-dim);
+    border: 1px solid var(--line);
+  }
+  .card-cta{
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12.5px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  footer{
+    text-align: center;
+    color: var(--chalk-dim);
+    font-size: 12px;
+    padding: 24px;
+    border-top: 1px solid var(--line);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  @media (max-width: 600px){
+    .masthead h1{ font-size: 32px; }
+    .wrap{ padding: 32px 16px 48px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="masthead">
+      <h1>NJ High School<br><span class="accent">Sports Predictor</span></h1>
+      <div class="sub">Power rankings &amp; playoff projections across New Jersey</div>
+    </header>
+
+    <div class="divider"></div>
+
+    <div id="seasons"></div>
+  </div>
+
+  <footer>
+    Built for New Jersey high school sports fans · More sports coming soon
+  </footer>
+
+<script>
+  // To make a sport live: set live:true and add a url. Everything else shows "Coming Soon".
+  const SEASONS = [
+    {
+      name: 'Fall',
+      sports: [
+        { name: 'Field Hockey',     icon: '\uD83C\uDFD1', live: false },
+        { name: 'Football',         icon: '\uD83C\uDFC8', live: true, url: 'https://njplayoffpredictor.vercel.app/',
+          blurb: 'NJSIAA United Power Ranking projections, sectional brackets, division races, and prediction tools.' },
+        { name: 'Boys Soccer',      icon: '\u26BD', live: false },
+        { name: 'Girls Soccer',     icon: '\u26BD', live: false },
+        { name: 'Girls Volleyball', icon: '\uD83C\uDFD0', live: false }
+      ]
+    },
+    {
+      name: 'Winter',
+      sports: [
+        { name: 'Boys Basketball',  icon: '\uD83C\uDFC0', live: false },
+        { name: 'Girls Basketball', icon: '\uD83C\uDFC0', live: false },
+        { name: 'Boys Ice Hockey',  icon: '\uD83C\uDFD2', live: false },
+        { name: 'Girls Ice Hockey', icon: '\uD83C\uDFD2', live: false }
+      ]
+    },
+    {
+      name: 'Spring',
+      sports: [
+        { name: 'Baseball',            icon: '\u26BE', live: false },
+        { name: 'Girls Flag Football', icon: '\uD83C\uDFC8', live: false },
+        { name: 'Boys Lacrosse',       icon: '\uD83E\uDD4D', live: false },
+        { name: 'Girls Lacrosse',      icon: '\uD83E\uDD4D', live: false },
+        { name: 'Softball',            icon: '\uD83E\uDD4E', live: false },
+        { name: 'Boys Volleyball',     icon: '\uD83C\uDFD0', live: false }
+      ]
+    }
+  ];
+
+  function cardHtml(sport){
+    const blurb = sport.blurb || `Power rankings and playoff projections for NJ ${sport.name.toLowerCase()}.`;
+    if (sport.live){
+      return `
+        <a class="card live" href="${sport.url}">
+          <span class="badge live">Live</span>
+          <div class="card-icon">${sport.icon}</div>
+          <h3>${sport.name}</h3>
+          <p>${blurb}</p>
+          <span class="card-cta">Open predictor &rarr;</span>
+        </a>`;
+    }
+    return `
+      <div class="card soon">
+        <span class="badge soon">Coming Soon</span>
+        <div class="card-icon">${sport.icon}</div>
+        <h3>${sport.name}</h3>
+        <p>${blurb}</p>
+      </div>`;
+  }
+
+  function seasonHtml(season){
+    const liveCount = season.sports.filter(s=>s.live).length;
+    const note = liveCount ? `${liveCount} live` : 'coming soon';
+    return `
+      <div class="season">
+        <div class="season-title">${season.name} <span class="season-note">${note}</span></div>
+        <div class="grid">${season.sports.map(cardHtml).join('')}</div>
+      </div>`;
+  }
+
+  document.getElementById('seasons').innerHTML = SEASONS.map(seasonHtml).join('');
+</script>
+</body>
+</html>
